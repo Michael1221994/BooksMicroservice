@@ -7,6 +7,8 @@ C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\ReviewService.dl
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\ReviewService.pdb
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.OpenApi.dll
+C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\StackExchange.Redis.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -17,6 +19,7 @@ C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\ReviewService.As
 C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\ReviewService.csproj.CoreCompileInputs.cache
 C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\ReviewService.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\ReviewService.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\ReviewService.sourcelink.json
 C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\micha\BookMicroservices\ReviewService\obj\Debug\net8.0\staticwebassets\msbuild.ReviewService.Microsoft.AspNetCore.StaticWebAssets.props

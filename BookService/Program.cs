@@ -14,7 +14,8 @@ builder.Services.AddSingleton<BookService.Repositories.BookRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect("localhost")
+    ConnectionMultiplexer.Connect("localhost" )
+    
 );
 builder.Services.AddSingleton<BookService.Services.RedisCacheService>();
 
