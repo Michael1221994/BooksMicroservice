@@ -1,6 +1,8 @@
 using ReviewService.Repositories;
 using StackExchange.Redis;
 using ReviewService.Services;
+using ReviewService.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<ReviewDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSingleton<ReviewRepository>();
 builder.Services.AddSingleton<IConnectionMultiplexer>(

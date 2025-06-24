@@ -4,14 +4,17 @@ namespace ReviewService.Repositories
 {
     public class ReviewRepository
     {
-        private static readonly List<Review> _reviews = new List<Review>();
-        public IEnumerable<Review> GetAll() => _reviews;
-        public IEnumerable<Review> GetByBookId(int bookId) => _reviews.Where(r => r.BookId == bookId);
+        private readonly ReviewDbContext _context;
+        public ReviewRepository(ReviewDbContext context) => _context = context;
+
+        public IEnumerable<Review> GetAll() => _context.Reviews.ToList();
+
+        public IEnumerable<Review> GetByBookId(int bookId) => _context.Reviews.Where(r => r.BookId == bookId).ToList();
+
         public void Add(Review review)
         {
-            review.Id=_reviews.Count+1;
-            review.CreatedAt=DateTime.UtcNow;
-            _reviews.Add(review);
-        }
+            _context.Reviews.Add(review);
+            _context.SaveChanges();
+           }
     }
 }

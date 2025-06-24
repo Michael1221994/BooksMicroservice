@@ -1,4 +1,7 @@
 using StackExchange.Redis;
+using BookService.Data;
+using Microsoft.EntityFrameworkCore;
+
 //using BookService.Services;
 
 
@@ -10,6 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//for the DBContext
+builder.Services.AddDbContext<BookDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//for redis
 builder.Services.AddSingleton<BookService.Repositories.BookRepository>();
 
 

@@ -7,6 +7,7 @@ using BookService.Services;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BookService.Dtos;
 
 
 
@@ -66,8 +67,24 @@ public class BookController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post(Book book)
+    public async Task<ActionResult> AddBook(CreateBookDto bookDto)
     {
+        if (string.IsNullOrWhiteSpace(bookDto.Title))
+            return BadRequest("Title is required.");
+    
+        if (string.IsNullOrWhiteSpace(bookDto.Author))
+            return BadRequest("Author is required.");
+
+        if (string.IsNullOrWhiteSpace(bookDto.ISBN))
+            return BadRequest("ISBN is required.");
+
+        var book = new Book
+        {
+            Title = bookDto.Title,
+            Author = bookDto.Author,
+            ISBN = bookDto.ISBN
+        };
+        
         _repository.Add(book);
         var json = JsonSerializer.Serialize(book);//after adding the book I save it in the cache for 5 minutes
         string cachekey = $"Book:{book.Id}";

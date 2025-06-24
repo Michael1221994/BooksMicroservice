@@ -1,14 +1,24 @@
+using BookService.Data;
 using BookService.Models;
 
 namespace BookService.Repositories
 {
     public class BookRepository
     {
-        private static readonly List<Book> _books = new(){new Book{Id = 1, Title = "Book 1", Author = "Author 1"}, new Book{Id = 2, Title = "Book 2", Author = "Author 2"}};
-        public IEnumerable<Book> GetAll() => _books;
+        private readonly BookDbContext _context;  
 
-        public Book? GetById(int id) => _books.FirstOrDefault(b => b.Id == id);
-        
-        public void Add(Book book) => _books.Add(book);
+        public BookRepository(BookDbContext context)
+        {
+        _context = context;
+        }
+        public IEnumerable<Book> GetAll() => _context.Books.ToList();
+
+        public Book? GetById(int id) => _context.Books.Find(id);
+
+        public void Add(Book book)
+        {
+            _context.Books.Add(book);
+            _context.SaveChanges();    
+        } 
     }
 }

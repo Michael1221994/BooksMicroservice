@@ -55,14 +55,40 @@ namespace ReviewService.Controllers
         
 
          [HttpPost]
-        public async Task<ActionResult> AddReview(Review review)
+        public async Task<ActionResult> AddReview(CreateReviewDto reviewDto)
         {
-           var allReviewsForBook = _repository.GetByBookId(review.BookId); //  get all reviews for the same book
-           var json = JsonSerializer.Serialize(allReviewsForBook);          //  serialize all of them
-           string cachekey = $"Review:{review.BookId}";                     //  cache by bookId
-            await _cache.SetCachedValue(cachekey, json, TimeSpan.FromMinutes(5));
-            _logger.LogInformation("Review {id} added to repository and in cache for the next 5min", review.Id);
+
+            if (reviewDto == null ||
+                reviewDto.BookId <= 0 ||
+                string.IsNullOrWhiteSpace(reviewDto.ReviewerName) ||
+                string.IsNullOrWhiteSpace(reviewDto.Comment) ||
+                reviewDto.Rating < 1 || reviewDto.Rating > 5)
+            {
+                return BadRequest("Invalid review data.");
+            }
+
+             var review = new Review
+            {
+                BookId = dto.BookId,
+                Rating = dto.Rating,
+                Comment = dto.Comment,
+                ReviewerName = dto.ReviewerName
+            };
+
+            _repository.Add(review);
+
+            //  all reviews for the same book and the new I just added
+            var allReviewsForBook = _repository.GetByBookId(review.BookId);
+
+            // Cache the updated list
+            var json = JsonSerializer.Serialize(allReviewsForBook);
+            string cacheKey = $"Review:{review.BookId}";
+            await _cache.SetCachedValue(cacheKey, json, TimeSpan.FromMinutes(5));
+
+            // Log and return response
+            _logger.LogInformation("Review {id} added to repository and updated in cache for 5 minutes", review.Id);
             return CreatedAtAction(nameof(GetReviewByBookId), new { bookId = review.BookId }, review);
         }
+
     }
 }
