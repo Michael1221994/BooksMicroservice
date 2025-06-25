@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ReviewService.Dtos
+namespace ReviewService.DTOs
 {
     public class CreateReviewDto
     {

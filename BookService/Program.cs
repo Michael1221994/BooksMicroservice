@@ -18,7 +18,7 @@ builder.Services.AddDbContext<BookDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //for redis
-builder.Services.AddSingleton<BookService.Repositories.BookRepository>();
+builder.Services.AddScoped<BookService.Repositories.BookRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(

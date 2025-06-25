@@ -3,6 +3,9 @@ using ReviewService.Models;
 using ReviewService.Repositories;
 using ReviewService.Services;
 using System.Text.Json;
+using ReviewService.Data; // for ReviewDbContext
+using ReviewService.DTOs; // for CreateReviewDto
+
 
 namespace ReviewService.Controllers
 {
@@ -55,7 +58,7 @@ namespace ReviewService.Controllers
         
 
          [HttpPost]
-        public async Task<ActionResult> AddReview(CreateReviewDto reviewDto)
+        public async Task<ActionResult> AddReview([FromBody] CreateReviewDto reviewDto)
         {
 
             if (reviewDto == null ||
@@ -69,10 +72,10 @@ namespace ReviewService.Controllers
 
              var review = new Review
             {
-                BookId = dto.BookId,
-                Rating = dto.Rating,
-                Comment = dto.Comment,
-                ReviewerName = dto.ReviewerName
+                BookId = reviewDto.BookId,
+                Rating = reviewDto.Rating,
+                Comment = reviewDto.Comment,
+                ReviewerName = reviewDto.ReviewerName
             };
 
             _repository.Add(review);

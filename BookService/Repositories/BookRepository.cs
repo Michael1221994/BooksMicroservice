@@ -13,7 +13,7 @@ namespace BookService.Repositories
         }
         public IEnumerable<Book> GetAll() => _context.Books.ToList();
 
-        public Book? GetById(int id) => _context.Books.Find(id);
+        public Book? GetByName(string Name) => _context.Books.FirstOrDefault(b => b.Title == Name);
 
         public void Add(Book book)
         {

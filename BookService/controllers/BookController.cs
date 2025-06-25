@@ -35,34 +35,34 @@ public class BookController : ControllerBase
         return Ok(_repository.GetAll());
     }
 
-    [HttpGet("getByID/{id:int:min(1)}", Name = "GetBookById")]
-    public async Task<ActionResult<Book>> GetById(int id)
+    [HttpGet("getByName/{Name:}", Name = "GetBookByName")]
+    public async Task<ActionResult<Book>> GetByName(string Name)
     {
-        string cacheKey = $"Book:{id}";
+        string cacheKey = $"Book:{Name}";
 
         var cached = await _cache.GetCachedValue(cacheKey);
 
         if (cached != null)
         {
-            _logger.LogInformation("Book {id} found in cache", id); //when there's a cache hit it logs it 
+            _logger.LogInformation("Book {id} found in cache", Name); //when there's a cache hit it logs it 
             var cachedBook = JsonSerializer.Deserialize<Book>(cached);// turning the json into a book object so that I can return it
             return Ok(cachedBook);
 
         }
         //after the 5mins I set. It'll be a cache miss so I'll look for it in the list
 
-        var book = _repository.GetById(id);//look for it in the list
+        var book = _repository.GetByName(Name);//look for it in the list
 
         if (book == null)
         {
-            _logger.LogWarning("Book {id} not found in cache or repository", id);
+            _logger.LogWarning("Book {id} not found in cache or repository", Name);
             return NotFound();
 
         }
 
         var json= JsonSerializer.Serialize(book); //turn the book into json
         await _cache.SetCachedValue(cacheKey, json, TimeSpan.FromMinutes(5));//store it in the cache for later
-        _logger.LogInformation("Book {id} found in repository", id);
+        _logger.LogInformation("Book {id} found in repository", Name);
         return Ok(book);
     }
 
@@ -90,8 +90,8 @@ public class BookController : ControllerBase
         string cachekey = $"Book:{book.Id}";
         await _cache.SetCachedValue(cachekey, json, TimeSpan.FromMinutes(5));
         _logger.LogInformation("Book {id} added to repository and cached for the next 5 minutes", book.Id);
-        return CreatedAtRoute("GetBookById", new { id = book.Id }, book);
-
+        //return CreatedAtRoute("GetBookByName", new { id = book.Id }, book);
+        return Ok(book);
         //return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
     }
 }

@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace ReviewService.Models
 {
     public class Review
     {
-        [Key] 
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]//auto increment
         public int Id { get; set; }
         [Required]

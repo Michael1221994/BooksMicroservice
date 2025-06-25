@@ -1,4 +1,6 @@
 using ReviewService.Models;
+using ReviewService.Data; // for ReviewDbContext
+using ReviewService.DTOs; // for CreateReviewDto
 
 namespace ReviewService.Repositories
 {
