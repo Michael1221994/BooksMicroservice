@@ -4,12 +4,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AuthService.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace AuthService.Controllers
 {
+    [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/[controller]")]   
+    [Route("api/v{version:apiVersion}/[controller]")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -93,10 +97,12 @@ namespace AuthService.Controllers
             //return Ok("Registration successful.");
         }
 
-        [Authorize]
         [HttpGet("protected")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Protected()
         {
+            Console.WriteLine(" Protected endpoint hit.");
+
             var userEmail = User?.Identity?.Name ?? "Unknown";
 
             return Ok("You accessed a protected route!");

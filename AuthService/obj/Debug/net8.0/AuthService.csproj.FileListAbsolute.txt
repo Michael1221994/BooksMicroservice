@@ -7,9 +7,12 @@ C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\AuthService.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\AuthService.pdb
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\DotNetEnv.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Humanizer.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.Versioning.dll
+C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.Build.Locator.dll
@@ -47,6 +50,7 @@ C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.OpenApi.
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Sprache.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\micha\BookMicroservices\AuthService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
