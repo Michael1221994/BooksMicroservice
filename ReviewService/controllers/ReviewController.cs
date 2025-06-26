@@ -10,7 +10,8 @@ using ReviewService.DTOs; // for CreateReviewDto
 namespace ReviewService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class ReviewController : ControllerBase
     {
         private readonly ReviewRepository _repository;
@@ -55,9 +56,9 @@ namespace ReviewService.Controllers
         {
             return Ok(_repository.GetAll());
         }
-        
 
-         [HttpPost]
+
+        [HttpPost]
         public async Task<ActionResult> AddReview([FromBody] CreateReviewDto reviewDto)
         {
 
@@ -70,7 +71,7 @@ namespace ReviewService.Controllers
                 return BadRequest("Invalid review data.");
             }
 
-             var review = new Review
+            var review = new Review
             {
                 BookId = reviewDto.BookId,
                 Rating = reviewDto.Rating,
@@ -92,6 +93,21 @@ namespace ReviewService.Controllers
             _logger.LogInformation("Review {id} added to repository and updated in cache for 5 minutes", review.Id);
             return CreatedAtAction(nameof(GetReviewByBookId), new { bookId = review.BookId }, review);
         }
+        
+        [HttpGet("averageRating/{bookId:int:min(1)}")]
+        public ActionResult<double> GetAverageRating(int bookId)
+        {
+            var avg = _repository.GetAverageRatingByBookId(bookId);
+            return Ok(avg);
+        }
+
+        [HttpGet("reviewCount/{bookId:int:min(1)}")]
+        public ActionResult<int> GetReviewCount(int bookId)
+        {
+            var count = _repository.GetReviewCountByBookId(bookId);
+            return Ok(count);
+        }
+
 
     }
 }

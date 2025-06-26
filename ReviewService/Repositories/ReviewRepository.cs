@@ -17,6 +17,19 @@ namespace ReviewService.Repositories
         {
             _context.Reviews.Add(review);
             _context.SaveChanges();
-           }
+        }
+           
+        public double GetAverageRatingByBookId(int bookId)
+        {
+            var reviews = _context.Reviews.Where(r => r.BookId == bookId).ToList();
+            if (!reviews.Any()) return 0;
+            return reviews.Average(r => r.Rating);
+        }
+
+        public int GetReviewCountByBookId(int bookId)
+        {
+            return _context.Reviews.Count(r => r.BookId == bookId);
+        }
+
     }
 }
