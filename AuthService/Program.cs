@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 
-DotNetEnv.Env.Load(); // This loads variables from .env into environment
+DotNetEnv.Env.Load(); // This loads the variables I set up from .env into my ownenvironment
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddEnvironmentVariables(); // add this
+builder.Configuration.AddEnvironmentVariables(); // add env
 
 
 builder.Services.AddSwaggerGen(options =>
@@ -55,8 +55,7 @@ builder.Services.AddSwaggerGen(options =>
 
 
 
-// Debug print to verify JWT key (remove this in production!)
-Console.WriteLine("JWT Key: " + builder.Configuration["Jwt:Key"]);
+
 
 
 // JWT Config
@@ -116,6 +115,10 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5102); // Tell Kestrel to listen on port 5102
+});
 
 
 var app = builder.Build();
@@ -155,7 +158,14 @@ app.MapGet("/debug/routes", (IEnumerable<EndpointDataSource> sources) =>
     return Results.Ok(routes);
 });
 
-Console.WriteLine("JWT Key: " + builder.Configuration["Jwt:Key"]);
+if (string.IsNullOrEmpty(builder.Configuration["Jwt:Key"]))
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine("WARNING: Jwt:Key is missing. Check your .env file!");
+    Console.ResetColor();
+}
+
+//Console.WriteLine("JWT Key: " + builder.Configuration["Jwt:Key"]);  //debug
 
 
 app.Run();

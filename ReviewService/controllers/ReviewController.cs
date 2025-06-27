@@ -5,6 +5,7 @@ using ReviewService.Services;
 using System.Text.Json;
 using ReviewService.Data; // for ReviewDbContext
 using ReviewService.DTOs; // for CreateReviewDto
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace ReviewService.Controllers
@@ -12,6 +13,7 @@ namespace ReviewService.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize]
     public class ReviewController : ControllerBase
     {
         private readonly ReviewRepository _repository;
@@ -59,6 +61,7 @@ namespace ReviewService.Controllers
 
 
         [HttpPost]
+        //[Authorize]
         public async Task<ActionResult> AddReview([FromBody] CreateReviewDto reviewDto)
         {
 
@@ -93,7 +96,7 @@ namespace ReviewService.Controllers
             _logger.LogInformation("Review {id} added to repository and updated in cache for 5 minutes", review.Id);
             return CreatedAtAction(nameof(GetReviewByBookId), new { bookId = review.BookId }, review);
         }
-        
+
         [HttpGet("averageRating/{bookId:int:min(1)}")]
         public ActionResult<double> GetAverageRating(int bookId)
         {

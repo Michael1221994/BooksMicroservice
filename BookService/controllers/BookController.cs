@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BookService.Dtos;
+using ReviewService.Grpc;
+using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -16,26 +18,61 @@ namespace BookService.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
+    //[Authorize]
     public class BookController : ControllerBase
     {
         private readonly ILogger<BookController> _logger; //needed to log to see if the result is from the cache or if it's from the list
         private readonly BookRepository _repository;
         private readonly RedisCacheService _cache;
+        private readonly ReviewGrpcService.ReviewGrpcServiceClient _reviewClient;
 
-        public BookController(BookRepository repository, RedisCacheService cache, ILogger<BookController> logger)
+
+        public BookController(BookRepository repository, RedisCacheService cache, ILogger<BookController> logger, ReviewGrpcService.ReviewGrpcServiceClient reviewClient)
         {
             _repository = repository;
             _cache = cache;
             _logger = logger;
+            _reviewClient = reviewClient;
 
         }
 
+        //[Authorize]
+        [HttpGet("getReviewStats/{bookId}")]
+        public async Task<IActionResult> GetReviewStats(int bookId)
+        {
+            try
+            {
+                var averageRatingResponse = await _reviewClient.GetAverageRatingAsync(
+                    new BookIdRequest { BookId = bookId }
+                );
+
+                var reviewCountResponse = await _reviewClient.GetReviewCountAsync(
+                    new BookIdRequest { BookId = bookId }
+                );
+
+                return Ok(new
+                {
+                    BookId = bookId,
+                    AverageRating = averageRatingResponse.AverageRating,
+                    ReviewCount = reviewCountResponse.Count
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log error if needed
+                return StatusCode(500, $"Error retrieving review stats: {ex.Message}");
+            }
+        }
+
+
+        //[Authorize]
         [HttpGet("getAll")]
         public ActionResult<IEnumerable<Book>> GetAll()
         {
             return Ok(_repository.GetAll());
         }
 
+        //[Authorize]
         [HttpGet("getByName/{Name:}", Name = "GetBookByName")]
         public async Task<ActionResult<Book>> GetByName(string Name)
         {
@@ -61,18 +98,19 @@ namespace BookService.Controllers
 
             }
 
-            var json= JsonSerializer.Serialize(book); //turn the book into json
+            var json = JsonSerializer.Serialize(book); //turn the book into json
             await _cache.SetCachedValue(cacheKey, json, TimeSpan.FromMinutes(5));//store it in the cache for later
             _logger.LogInformation("Book {id} found in repository", Name);
             return Ok(book);
         }
 
+        //[Authorize]
         [HttpPost]
         public async Task<ActionResult> AddBook(CreateBookDto bookDto)
         {
             if (string.IsNullOrWhiteSpace(bookDto.Title))
                 return BadRequest("Title is required.");
-        
+
             if (string.IsNullOrWhiteSpace(bookDto.Author))
                 return BadRequest("Author is required.");
 
@@ -85,7 +123,7 @@ namespace BookService.Controllers
                 Author = bookDto.Author,
                 ISBN = bookDto.ISBN
             };
-            
+
             _repository.Add(book);
             var json = JsonSerializer.Serialize(book);//after adding the book I save it in the cache for 5 minutes
             string cachekey = $"Book:{book.Id}";
@@ -95,6 +133,28 @@ namespace BookService.Controllers
             return Ok(book);
             //return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
         }
+
+        [HttpGet("test-review/{bookId}")]
+        public async Task<IActionResult> GetReviewStats(int bookId, [FromServices] ReviewGrpcService.ReviewGrpcServiceClient client)
+        {
+            try
+            {
+                var avgRating = await client.GetAverageRatingAsync(new BookIdRequest { BookId = bookId });
+                var reviewCount = await client.GetReviewCountAsync(new BookIdRequest { BookId = bookId });
+
+                return Ok(new
+                {
+                    BookId = bookId,
+                    avgRating.AverageRating,
+                    ReviewCount = reviewCount.Count
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving review stats: {ex.Message}");
+            }
+        }
+
     }
 
 

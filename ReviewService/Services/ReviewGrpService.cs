@@ -1,9 +1,11 @@
 using Grpc.Core;
 using ReviewService.Grpc;
 using ReviewService.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReviewService.Services
 {
+    [Authorize]
     public class ReviewGrpcService : ReviewService.Grpc.ReviewGrpcService.ReviewGrpcServiceBase
     {
         private readonly ReviewRepository _repository;

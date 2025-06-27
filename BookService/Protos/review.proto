@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "ReviewService.Grpc";
+
+package review;
+
+// Request message for book ID
+message BookIdRequest {
+  int32 bookId = 1;
+}
+
+// Response message for average rating
+message AverageRatingResponse {
+  double averageRating = 1;
+}
+
+// Response message for number of reviews
+message ReviewCountResponse {
+  int32 count = 1;
+}
+
+// The gRPC service definition
+service ReviewGrpcService {
+  rpc GetAverageRating(BookIdRequest) returns (AverageRatingResponse);
+  rpc GetReviewCount(BookIdRequest) returns (ReviewCountResponse);
+}

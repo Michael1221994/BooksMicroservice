@@ -6,12 +6,30 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using BookService.Configuration;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen; // SwaggerGenOptions
+using Grpc.Net.ClientFactory;
+using ReviewService.Grpc;
+using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Grpc.Net.Client;
+using Grpc.Core;
+//using ReviewGrpcService;
+
+
+DotNetEnv.Env.Load(); // This loads variables from .env into environment
 
 
 //using BookService.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Read JWT settings from .env
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -43,17 +61,51 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BookDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//for redis
+
+
 builder.Services.AddScoped<BookService.Repositories.BookRepository>();
 
+builder.Services.AddGrpcClient<ReviewGrpcService.ReviewGrpcServiceClient>(options =>
+{
+    options.Address = new Uri("http://localhost:5212");
+})
+.ConfigureChannel(options =>
+{
+    options.Credentials = Grpc.Core.ChannelCredentials.Insecure;
+});
 
+//for redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect("localhost,abortConnect=false" )
+    ConnectionMultiplexer.Connect(builder.Configuration["Redis:Connection"])
+
     
 );
 builder.Services.AddSingleton<BookService.Services.RedisCacheService>();
 
+// Add authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5294);
+});
 
 var app = builder.Build();
 
@@ -87,6 +139,7 @@ if (app.Environment.IsDevelopment())
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();*/
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

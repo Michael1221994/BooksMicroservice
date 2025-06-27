@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  authservice:
+    build:
+      context: ./AuthService
+    ports:
+      - "5102:5102"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    env_file:
+      - ./AuthService/.env
+    depends_on:
+      - redis
+      - db
+
+  bookservice:
+    build:
+      context: ./BookService
+    ports:
+      - "5294:5294"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    env_file:
+      - ./BookService/.env
+
+    depends_on:
+      - redis
+      - db
+
+  reviewservice:
+    build:
+      context: ./ReviewService
+    ports:
+      - "5212:5212"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    env_file:
+      - ./ReviewService/.env
+    depends_on:
+      - redis
+      - db
+
+  envoy:
+    image: envoyproxy/envoy:v1.29-latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      - authservice
+      - bookservice
+      - reviewservice
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "E!R3kF@a91sdPO8z"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"

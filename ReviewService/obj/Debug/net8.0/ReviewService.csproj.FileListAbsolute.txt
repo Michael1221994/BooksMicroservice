@@ -7,6 +7,7 @@ C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\ReviewService.dl
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\ReviewService.pdb
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\DotNetEnv.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Google.Protobuf.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Grpc.AspNetCore.Server.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Grpc.AspNetCore.Server.ClientFactory.dll
@@ -15,6 +16,7 @@ C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Grpc.Net.Client.
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Grpc.Net.ClientFactory.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Grpc.Net.Common.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Humanizer.dll
+C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.Versioning.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
@@ -55,6 +57,7 @@ C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.SqlSer
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Mono.TextTemplating.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Sprache.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\StackExchange.Redis.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\micha\BookMicroservices\ReviewService\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
