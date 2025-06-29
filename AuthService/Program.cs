@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using DotNetEnv;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
+
 
 
 DotNetEnv.Env.Load(); // This loads the variables I set up from .env into my ownenvironment
@@ -101,6 +103,9 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.ReportApiVersions = true;
+
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+
 });
 
 builder.Services.AddVersionedApiExplorer(options =>

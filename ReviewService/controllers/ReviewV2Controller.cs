@@ -9,7 +9,7 @@ namespace ReviewService.Controllers
 {
     [ApiVersion("2.0")]
     [ApiController]
-    [Route("api/v{version:apiVersion}/Review")]
+    [Route("v{version:apiVersion}/review")]
     public class ReviewV2Controller : ControllerBase
     {
         private readonly ReviewRepository _repository;

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using ReviewService.Configuration;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using ReviewService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -22,6 +21,10 @@ DotNetEnv.Env.Load();
 
 
 var builder = WebApplication.CreateBuilder(args);
+var jwtKey = Environment.GetEnvironmentVariable("JWT__SECRET_KEY");
+var issuer = Environment.GetEnvironmentVariable("JWT__ISSUER");
+var audience = Environment.GetEnvironmentVariable("JWT__AUDIENCE");
+
 builder.Configuration.AddEnvironmentVariables(); //  for Docker environmentt
 
 // Add services to the container.
@@ -63,30 +66,32 @@ builder.Services.AddGrpc();
 //gotta make it  explicitly listens with HTTP/2 for gRPC.
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenLocalhost(5212, listenOptions =>
+    options.ListenAnyIP(5222, listenOptions =>
     {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
     });
 });
+
+
 
 // JWT configuration
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var config = builder.Configuration;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = config["Jwt:Issuer"],
-            ValidAudience = config["Jwt:Audience"],
+            ValidIssuer = issuer,
+            ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(config["Jwt:Key"] ?? "fallbackkey")
+                Encoding.UTF8.GetBytes(jwtKey ?? "fallbackkey")
             )
         };
     });
+
 /*builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
@@ -103,10 +108,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             )
         };
     });*/
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(5212);
-});
+
 
 var app = builder.Build();
 

@@ -26,9 +26,9 @@ DotNetEnv.Env.Load(); // This loads variables from .env into environment
 var builder = WebApplication.CreateBuilder(args);
 
 // Read JWT settings from .env
-var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
-var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+var jwtKey = Environment.GetEnvironmentVariable("JWT__SECRET_KEY");
+var issuer = Environment.GetEnvironmentVariable("JWT__ISSUER");
+var audience = Environment.GetEnvironmentVariable("JWT__AUDIENCE");
 
 
 // Add services to the container.
@@ -104,8 +104,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5294);
-});
+    options.ListenAnyIP(5294, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+    });
+});// gotta enable both for grpc communication
+
 
 var app = builder.Build();
 

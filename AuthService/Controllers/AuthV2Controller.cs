@@ -10,7 +10,7 @@ namespace AuthService.Controllers
 {
     [ApiVersion("2.0")]
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("v{version:apiVersion}/auth")]
     public class AuthV2Controller : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;

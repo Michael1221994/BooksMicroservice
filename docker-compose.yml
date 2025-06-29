@@ -32,7 +32,7 @@ services:
     build:
       context: ./ReviewService
     ports:
-      - "5212:5212"
+      - "5222:5222"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     env_file:

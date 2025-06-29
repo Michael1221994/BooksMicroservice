@@ -12,7 +12,7 @@ namespace AuthService.Controllers
 {
     [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("v{version:apiVersion}/auth")]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthController : ControllerBase
     {
@@ -93,8 +93,12 @@ namespace AuthService.Controllers
             // JWT token 
             var token = _jwtService.GenerateToken(user);
 
+            Console.WriteLine($"Received: {request.Email} - {request.FullName}");
+
+
             return Ok(new { message = "Registration successful", token });
             //return Ok("Registration successful.");
+
         }
 
         [HttpGet("protected")]

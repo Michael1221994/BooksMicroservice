@@ -17,12 +17,31 @@ static_resources:
                     - name: backend
                       domains: ["*"]
                       routes:
-                        - match: { prefix: "/book" }
-                          route: { cluster: book_service }
-                        - match: { prefix: "/review" }
-                          route: { cluster: review_service }
-                        - match: { prefix: "/auth" }
-                          route: { cluster: auth_service }
+                        - match:
+                            prefix: "/v1/auth"
+                          route:
+                            cluster: auth_service
+                            #prefix_rewrite: "/v1/auth"
+
+                        - match:
+                            prefix: "/v2/auth"
+                          route:
+                            cluster: auth_service
+
+                        - match:
+                            safe_regex:
+                              regex: "^/v[0-9]+/book"
+                          route:
+                            cluster: book_service
+                            #prefix_rewrite: "/book"
+
+                        - match:
+                            safe_regex:
+                              regex: "^/v[0-9]+/review"
+                          route:
+                            cluster: review_service
+                            #prefix_rewrite: "/review"
+
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config:
@@ -56,7 +75,7 @@ static_resources:
                   address:
                     socket_address: 
                       address: reviewservice
-                      port_value: 5212
+                      port_value: 5222
 
     - name: auth_service
       connect_timeout: 0.25s

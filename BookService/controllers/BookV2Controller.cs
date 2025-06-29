@@ -10,7 +10,7 @@ namespace BookService.Controllers
 {
     [ApiVersion("2.0")]
     [ApiController]
-    [Route("api/v{version:apiVersion}/Book")] 
+    [Route("v{version:apiVersion}/book")] 
     public class BookV2Controller : ControllerBase
     {
         private readonly ILogger<BookController> _logger;
