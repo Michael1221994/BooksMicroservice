@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 using BookService.Dtos;
 using ReviewService.Grpc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 
 namespace BookService.Controllers
 {
-    [ApiController]
     [ApiVersion("1.0")]
+    [ApiController]
     [Route("v{version:apiVersion}/book")]
-    //[Authorize]
     public class BookController : ControllerBase
     {
         private readonly ILogger<BookController> _logger; //needed to log to see if the result is from the cache or if it's from the list
@@ -37,6 +37,7 @@ namespace BookService.Controllers
         }
 
         //[Authorize]
+        
         [HttpGet("getReviewStats/{bookId}")]
         public async Task<IActionResult> GetReviewStats(int bookId)
         {
@@ -66,6 +67,7 @@ namespace BookService.Controllers
 
 
         //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("getAll")]
         public ActionResult<IEnumerable<Book>> GetAll()
         {
@@ -73,6 +75,7 @@ namespace BookService.Controllers
         }
 
         //[Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("getByName/{Name:}", Name = "GetBookByName")]
         public async Task<ActionResult<Book>> GetByName(string Name)
         {
@@ -104,8 +107,21 @@ namespace BookService.Controllers
             return Ok(book);
         }
 
+        /*[ApiController]
+        [Route("health")]
+        public class HealthController : ControllerBase
+        {
+            [HttpGet]
+            public IActionResult Get() => Ok("Healthy");
+        }
+        */
+
+        //[HttpGet]
+        //public IActionResult Get() => Ok("Healthy");
+
         //[Authorize]
-        [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("AddBook")]
         public async Task<ActionResult> AddBook(CreateBookDto bookDto)
         {
             if (string.IsNullOrWhiteSpace(bookDto.Title))
@@ -134,11 +150,13 @@ namespace BookService.Controllers
             //return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("test-review/{bookId}")]
         public async Task<IActionResult> GetReviewStats(int bookId, [FromServices] ReviewGrpcService.ReviewGrpcServiceClient client)
         {
             try
             {
+                //var response = await _reviewGrpcClient.GetAverageRatingAsync(new BookIdRequest { BookId = id });
                 var avgRating = await client.GetAverageRatingAsync(new BookIdRequest { BookId = bookId });
                 var reviewCount = await client.GetReviewCountAsync(new BookIdRequest { BookId = bookId });
 
@@ -151,6 +169,7 @@ namespace BookService.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error retrieving review stats");
                 return StatusCode(500, $"Error retrieving review stats: {ex.Message}");
             }
         }

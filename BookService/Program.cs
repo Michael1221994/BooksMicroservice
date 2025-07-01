@@ -14,16 +14,20 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Grpc.Net.Client;
 using Grpc.Core;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+
 //using ReviewGrpcService;
 
 
 DotNetEnv.Env.Load(); // This loads variables from .env into environment
+AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables(); // add env
 
 //using BookService.Services;
 
 
-var builder = WebApplication.CreateBuilder(args);
 
 // Read JWT settings from .env
 var jwtKey = Environment.GetEnvironmentVariable("JWT__SECRET_KEY");
@@ -58,28 +62,42 @@ builder.Services.AddSwaggerGen();
 
 
 //for the DBContext
+var dbConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+
 builder.Services.AddDbContext<BookDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(dbConnection));
+
 
 
 
 builder.Services.AddScoped<BookService.Repositories.BookRepository>();
 
-builder.Services.AddGrpcClient<ReviewGrpcService.ReviewGrpcServiceClient>(options =>
-{
-    options.Address = new Uri("http://localhost:5212");
-})
-.ConfigureChannel(options =>
-{
-    options.Credentials = Grpc.Core.ChannelCredentials.Insecure;
-});
+builder.Services
+    .AddGrpcClient<ReviewGrpcService.ReviewGrpcServiceClient>(options =>
+    {
+        options.Address = new Uri("http://reviewservice:5222");
+    })
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        AllowAutoRedirect = true,
+        UseCookies = false,
+        //SslOptions = { RemoteCertificateValidationCallback = (_, _, _, _) => true },
+        EnableMultipleHttp2Connections = true
+    });
+
+
 
 //for redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(builder.Configuration["Redis:Connection"])
+    ConnectionMultiplexer.Connect(
+        builder.Configuration["Redis:Connection"] + ",abortConnect=false"
+    )
+);
+
+
 
     
-);
+
 builder.Services.AddSingleton<BookService.Services.RedisCacheService>();
 
 // Add authentication
@@ -101,6 +119,9 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
+
+builder.Services.AddAuthorization();
+
 
 builder.WebHost.ConfigureKestrel(options =>
 {

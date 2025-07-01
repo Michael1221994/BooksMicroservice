@@ -12,12 +12,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using DotNetEnv;
-using System.Text;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 
 
 //in local dev
 DotNetEnv.Env.Load();
+AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,11 +67,20 @@ builder.Services.AddGrpc();
 //gotta make it  explicitly listens with HTTP/2 for gRPC.
 builder.WebHost.ConfigureKestrel(options =>
 {
+    // REST
+    options.ListenAnyIP(5223, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http1;
+    });
+
+    // gRPC
     options.ListenAnyIP(5222, listenOptions =>
     {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+        listenOptions.Protocols = HttpProtocols.Http2;
     });
 });
+
+//builder.WebHost.ConfigureKestrel(builder.Configuration.GetSection("Kestrel"));
 
 
 

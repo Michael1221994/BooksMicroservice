@@ -13,8 +13,11 @@ services:
     depends_on:
       - redis
       - db
+    networks:
+      - booknetwork
 
   bookservice:
+    container_name: bookservice
     build:
       context: ./BookService
     ports:
@@ -27,12 +30,16 @@ services:
     depends_on:
       - redis
       - db
+    networks:
+      - booknetwork
 
   reviewservice:
+    container_name: reviewservice
     build:
       context: ./ReviewService
     ports:
       - "5222:5222"
+      - "5223:5223" # REST
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     env_file:
@@ -40,6 +47,8 @@ services:
     depends_on:
       - redis
       - db
+    networks:
+      - booknetwork
 
   envoy:
     image: envoyproxy/envoy:v1.29-latest
@@ -51,11 +60,15 @@ services:
       - authservice
       - bookservice
       - reviewservice
+    networks:
+      - booknetwork
 
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+      - booknetwork
 
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -64,3 +77,9 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    networks:
+      - booknetwork
+
+networks:
+  booknetwork:
+    driver: bridge

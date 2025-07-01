@@ -2,10 +2,12 @@ using Grpc.Core;
 using ReviewService.Grpc;
 using ReviewService.Repositories;
 using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ReviewService.Services
 {
-    [Authorize]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
     public class ReviewGrpcService : ReviewService.Grpc.ReviewGrpcService.ReviewGrpcServiceBase
     {
         private readonly ReviewRepository _repository;

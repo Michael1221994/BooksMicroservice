@@ -28,24 +28,40 @@ static_resources:
                           route:
                             cluster: auth_service
 
+                        # BookService
                         - match:
-                            safe_regex:
-                              regex: "^/v[0-9]+/book"
+                            prefix: "/v1/book"
                           route:
                             cluster: book_service
-                            #prefix_rewrite: "/book"
+                            #prefix_rewrite: "/v1/book"
 
                         - match:
-                            safe_regex:
-                              regex: "^/v[0-9]+/review"
+                            prefix: "/v2/book"
+                          route:
+                            cluster: book_service
+                            #prefix_rewrite: "/v2/book"
+                          # ReviewService
+                        - match:
+                            prefix: "/v1/review"
                           route:
                             cluster: review_service
-                            #prefix_rewrite: "/review"
+                            timeout: 0s # Required for gRPC to allow streaming
+                            #prefix_rewrite: "/v1/review"
+
+                        - match:
+                            prefix: "/v2/review"
+                          route:
+                            cluster: review_service
+                            timeout: 0s
+                            #prefix_rewrite: "/v2/review"
+
+
 
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+                
 
 
   clusters:
@@ -62,11 +78,17 @@ static_resources:
                     socket_address: 
                       address: bookservice
                       port_value: 5294
+    
 
     - name: review_service
       connect_timeout: 0.25s
       type: logical_dns
       lb_policy: round_robin
+      typed_extension_protocol_options:
+        envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+          "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+          explicit_http_config:
+            http2_protocol_options: {}
       load_assignment:
         cluster_name: review_service
         endpoints:
@@ -76,6 +98,7 @@ static_resources:
                     socket_address: 
                       address: reviewservice
                       port_value: 5222
+        
 
     - name: auth_service
       connect_timeout: 0.25s

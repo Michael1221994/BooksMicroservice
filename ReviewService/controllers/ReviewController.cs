@@ -6,14 +6,15 @@ using System.Text.Json;
 using ReviewService.Data; // for ReviewDbContext
 using ReviewService.DTOs; // for CreateReviewDto
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 namespace ReviewService.Controllers
 {
-    [ApiController]
     [ApiVersion("1.0")]
+    [ApiController]
     [Route("v{version:apiVersion}/review")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ReviewController : ControllerBase
     {
         private readonly ReviewRepository _repository;
@@ -28,6 +29,8 @@ namespace ReviewService.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult Get() => Ok("Healthy");
 
         [HttpGet("getByID/{bookId:int:min(1)}", Name = "GetReviewByBookId")]
         public async Task<ActionResult<IEnumerable<Review>>> GetReviewByBookId(int bookId)
@@ -53,12 +56,12 @@ namespace ReviewService.Controllers
 
         }
 
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("getAll")]
         public ActionResult<IEnumerable<Review>> GetAll()
         {
             return Ok(_repository.GetAll());
         }
-
 
         [HttpPost]
         //[Authorize]

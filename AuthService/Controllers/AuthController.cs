@@ -94,11 +94,12 @@ namespace AuthService.Controllers
             var token = _jwtService.GenerateToken(user);
 
             Console.WriteLine($"Received: {request.Email} - {request.FullName}");
+            Console.WriteLine($"Received: {request.Email} - {request.FullName}");
 
 
             return Ok(new { message = "Registration successful", token });
             //return Ok("Registration successful.");
-
+            
         }
 
         [HttpGet("protected")]
